@@ -133,6 +133,38 @@ In addition to `$this->resetPage()`, Livewire provides other useful methods for 
 | `$this->nextPage()`    | Go to the next page |
 | `$this->previousPage()`    | Go to the previous page |
 
+> [!warning]
+> You can use the lifecycle hooks `updating/updated` but the attribute of the component must have a default value and the method must have the `$value` variable.
+>
+
+```php
+<?php
+
+namespace App\Livewire;
+use Livewire\WithPagination;
+use Livewire\Component;
+use App\Models\Post;
+
+class SearchPosts extends Component
+{
+    use WithPagination;
+
+    public $query = '';
+
+    public function updatedQuery($value)
+    {
+        $this->resetPage();
+    }
+
+    public function render()
+    {
+        return view('show-posts', [
+            'posts' => Post::where('title', 'like', '%'.$this->query.'%')->paginate(10),
+        ]);
+    }
+}
+```
+
 ## Multiple paginators
 
 Because both Laravel and Livewire use URL query string parameters to store and track the current page number, if a single page contains multiple paginators, it's important to assign them different names.
